@@ -39,7 +39,7 @@ public class GymReportService {
             long updatedWorkLoad = currentWorkLoad - duration;
 
             if (updatedWorkLoad < 0) {
-                // TODO: Обработка ошибки, если новая рабочая нагрузка становится отрицательной
+                monthlyWorkLoad.put(trainingMonth, 0L);
             } else {
                 monthlyWorkLoad.put(trainingMonth, updatedWorkLoad);
             }
