@@ -1,7 +1,7 @@
 package com.example.gymreport.redis.service;
 
 import com.example.gymreport.redis.model.TrainerSummary;
-import com.example.gymreport.redis.repository.TrainerMonthlyWorkLoadRepository;
+import com.example.gymreport.redis.repository.TrainerWorkLoadRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,27 +13,18 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class TrainerSummaryService {
-    private final TrainerMonthlyWorkLoadRepository trainerMonthlyWorkLoadRepository;
+    private final TrainerWorkLoadRepository trainerWorkLoadRepository;
 
-    public void saveTrainerWorkLoad(String username, Month month, Long workLoad) {
-        log.info("Entry TrainerSummaryService saveTrainerWorkLoad method");
-        trainerMonthlyWorkLoadRepository.saveTrainerWorkLoad(username, month, workLoad);
-        log.info("Exit TrainerSummaryService saveTrainerWorkLoad method");
-    }
-
-    public Optional<Long> findTrainerWorkLoad(String username, Month month) {
-        return trainerMonthlyWorkLoadRepository.findTrainerWorkLoad(username, month);
-    }
-
-    public void updateTrainerWorkLoad(String username, Month month, Long updatedWorkLoad) {
-        trainerMonthlyWorkLoadRepository.updateTrainerWorkLoad(username, month, updatedWorkLoad);
-    }
-
-    public void deleteTrainerWorkLoad(String username, Month month) {
-        trainerMonthlyWorkLoadRepository.deleteTrainerWorkLoad(username, month);
+    public Optional<Long> findTrainerWorkLoad(String username, int year, int monthValue) {
+        Month month = Month.of(monthValue);
+        return trainerWorkLoadRepository.findTrainerWorkLoadByMonth(username, year, month);
     }
 
     public Optional<TrainerSummary> findTrainerSummaryByUsername(String username) {
-        return trainerMonthlyWorkLoadRepository.findTrainerSummaryByUsername(username);
+        return trainerWorkLoadRepository.findTrainerSummaryByUsername(username);
+    }
+
+    public void saveTrainerSummary(String username, TrainerSummary trainerSummary) {
+        trainerWorkLoadRepository.saveTrainerSummary(username, trainerSummary);
     }
 }

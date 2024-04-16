@@ -2,7 +2,6 @@ package com.example.gymreport.controller.imp;
 
 import com.example.gymreport.controller.GymReportApi;
 import com.example.gymreport.dto.TrainerWorkLoadRequest;
-import com.example.gymreport.redis.model.TrainerSummary;
 import com.example.gymreport.service.GymReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +22,8 @@ public class GymReportControllerImpl implements GymReportApi {
     }
 
     @Override
-    public ResponseEntity<TrainerSummary> getTrainerSummaryByUsername(String username) {
-        TrainerSummary trainerSummaryByUsername = gymReportService.getTrainerSummaryByUsername(username);
-        return ResponseEntity.ok(trainerSummaryByUsername);
+    public ResponseEntity<Long> getTrainerSummaryByUsername(String username, int year, int monthValue) {
+        Long workloadByUsernameAndMonth = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue);
+        return ResponseEntity.ok(workloadByUsernameAndMonth);
     }
 }

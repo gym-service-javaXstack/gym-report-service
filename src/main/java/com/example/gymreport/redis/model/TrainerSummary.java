@@ -1,22 +1,25 @@
 package com.example.gymreport.redis.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisHash;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.Month;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
 @RedisHash("TrainerSummary")
-public class TrainerSummary implements Serializable{
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private Map<Month, Long> monthlyWorkLoad;
+public class TrainerSummary implements Serializable {
+    private String username;
+    private String firstName;
+    private String lastName;
+    private Boolean status;
+    private Map<Integer, Map<Month, Long>> yearlySummary;
 
     public TrainerSummary() {
-        this.monthlyWorkLoad = new EnumMap<>(Month.class);
+        this.yearlySummary = new HashMap<>();
     }
 }
