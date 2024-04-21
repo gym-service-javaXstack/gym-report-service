@@ -1,5 +1,6 @@
-package com.example.gymreport.service;
+package com.example.gymreport.service.web.impl;
 
+import com.example.gymreport.service.web.WebClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,13 +10,14 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WebClientService {
+public class BearerWebClientServiceImpl implements WebClientService {
     private final WebClient webClient;
 
-    public Mono<String> requestDataFromOtherMicroservice(String jwtToken) {
+    @Override
+    public Mono<String> requestDataFromOtherMicroservice(String authHeader) {
         return webClient.get()
                 .uri("http://gym-main/api/v1/token")
-                .header("Authorization", "Bearer " + jwtToken)
+                .header("Authorization", authHeader)
                 .retrieve()
                 .bodyToMono(String.class);
     }

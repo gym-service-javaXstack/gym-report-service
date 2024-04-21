@@ -3,7 +3,7 @@ package com.example.gymreport.advice.impl;
 import com.example.gymreport.advice.AuthorizationHandler;
 import com.example.gymreport.exceptions.Error;
 import com.example.gymreport.exceptions.UnauthorizedException;
-import com.example.gymreport.service.WebClientService;
+import com.example.gymreport.service.web.WebClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class BearerAuthorizationHandler implements AuthorizationHandler {
-    private final WebClientService webClientService;
+    private final WebClientService bearerWebClientServiceImpl;
 
     @Override
     public boolean isApplicable(String authHeader) {
@@ -28,8 +28,8 @@ public class BearerAuthorizationHandler implements AuthorizationHandler {
 
     @Override
     public void processAuthorization(String authHeader) {
-        String token = authHeader.substring(7);
-        webClientService.requestDataFromOtherMicroservice(token)
+        bearerWebClientServiceImpl
+                .requestDataFromOtherMicroservice(authHeader)
                 .doOnError(this::handleError)
                 .block();
     }
