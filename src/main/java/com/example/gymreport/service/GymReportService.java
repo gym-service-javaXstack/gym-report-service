@@ -17,6 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GymReportService {
     private final TrainerSummaryService trainerSummaryService;
+    private final AuthenticationService authenticationService;
 
     public void processTrainerWorkload(TrainerWorkLoadRequest request) {
         log.info("Entry GymReportService processTrainerWorkload method, request = {}", request);
@@ -54,7 +55,8 @@ public class GymReportService {
         log.info("Exit GymReportService processTrainerWorkload method");
     }
 
-    public Long getWorkloadByUsernameAndMonth(String username, int year, int monthValue) {
+    public Long getWorkloadByUsernameAndMonth(String username, int year, int monthValue, String authHeader) {
+        authenticationService.handleAuthorization(authHeader);
         return trainerSummaryService.findTrainerWorkLoad(username, year, monthValue)
                 .orElse(0L);
     }
