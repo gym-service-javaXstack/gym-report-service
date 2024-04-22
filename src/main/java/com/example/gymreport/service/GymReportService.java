@@ -56,7 +56,7 @@ public class GymReportService {
     }
 
     public Long getWorkloadByUsernameAndMonth(String username, int year, int monthValue, String authHeader) {
-        authenticationService.handleAuthorization(authHeader);
+        authenticationService.validateToken(authHeader);
         return trainerSummaryService.findTrainerWorkLoad(username, year, monthValue)
                 .orElse(0L);
     }
