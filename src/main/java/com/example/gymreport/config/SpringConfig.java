@@ -1,7 +1,9 @@
 package com.example.gymreport.config;
 
 import com.example.gymreport.handler.interceptor.CorrelationIdLoggerInterceptor;
+import feign.codec.ErrorDecoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,5 +16,10 @@ public class SpringConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(correlationIdLoggerInterceptor).addPathPatterns("/api/**");
+    }
+
+    @Bean
+    public ErrorDecoder myErrorDecoder() {
+        return new FeignClientDecoder();
     }
 }
