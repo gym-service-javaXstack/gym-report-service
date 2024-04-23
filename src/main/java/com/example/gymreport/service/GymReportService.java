@@ -22,7 +22,7 @@ public class GymReportService {
     public void processTrainerWorkload(TrainerWorkLoadRequest request) {
         log.info("Entry GymReportService processTrainerWorkload method, request = {}", request);
 
-        Long duration = request.getTrainingDuration();
+        Integer duration = request.getTrainingDuration();
         Month trainingMonth = request.getTrainingDate().getMonth();
         int trainingYear = request.getTrainingDate().getYear();
 
@@ -34,17 +34,17 @@ public class GymReportService {
         trainerSummary.setLastName(request.getLastName());
         trainerSummary.setStatus(request.getIsActive());
 
-        Map<Month, Long> yearWorkLoad = trainerSummary.getYearlySummary().computeIfAbsent(trainingYear, k -> new EnumMap<>(Month.class));
+        Map<Month, Integer> yearWorkLoad = trainerSummary.getYearlySummary().computeIfAbsent(trainingYear, k -> new EnumMap<>(Month.class));
 
-        Long currentWorkLoad = yearWorkLoad.getOrDefault(trainingMonth, 0L);
+        Integer currentWorkLoad = yearWorkLoad.getOrDefault(trainingMonth, 0);
 
         if (request.getActionType() == ActionType.ADD) {
             yearWorkLoad.put(trainingMonth, currentWorkLoad + duration);
         } else if (request.getActionType() == ActionType.DELETE) {
-            long updatedWorkLoad = currentWorkLoad - duration;
+            int updatedWorkLoad = currentWorkLoad - duration;
 
             if (updatedWorkLoad < 0) {
-                yearWorkLoad.put(trainingMonth, 0L);
+                yearWorkLoad.put(trainingMonth, 0);
             } else {
                 yearWorkLoad.put(trainingMonth, updatedWorkLoad);
             }
@@ -55,9 +55,9 @@ public class GymReportService {
         log.info("Exit GymReportService processTrainerWorkload method");
     }
 
-    public Long getWorkloadByUsernameAndMonth(String username, int year, int monthValue, String authHeader) {
+    public Integer getWorkloadByUsernameAndMonth(String username, int year, int monthValue, String authHeader) {
         authenticationService.validateToken(authHeader);
         return trainerSummaryService.findTrainerWorkLoad(username, year, monthValue)
-                .orElse(0L);
+                .orElse(0);
     }
 }

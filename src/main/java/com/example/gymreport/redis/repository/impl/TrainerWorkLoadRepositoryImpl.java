@@ -24,10 +24,10 @@ public class TrainerWorkLoadRepositoryImpl implements TrainerWorkLoadRepository 
     }
 
     @Override
-    public Optional<Long> findTrainerWorkLoadByMonth(String username, int year, Month month) {
+    public Optional<Integer> findTrainerWorkLoadByMonth(String username, int year, Month month) {
         TrainerSummary trainerSummary = hashOperations.get(TRAINER_SUMMARY_KEY, username);
         if (trainerSummary != null && trainerSummary.getYearlySummary().containsKey(year)) {
-            Long workLoad = trainerSummary.getYearlySummary().get(year).get(month);
+            Integer workLoad = trainerSummary.getYearlySummary().get(year).get(month);
             return Optional.ofNullable(workLoad);
         }
         return Optional.empty();

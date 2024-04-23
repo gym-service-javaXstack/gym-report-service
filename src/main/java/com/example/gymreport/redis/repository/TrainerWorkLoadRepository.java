@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface TrainerWorkLoadRepository {
     void saveTrainerSummary(String username, TrainerSummary trainerSummary);
 
-    Optional<Long> findTrainerWorkLoadByMonth(String username, int year, Month month);
+    Optional<Integer> findTrainerWorkLoadByMonth(String username, int year, Month month);
 
     Optional<TrainerSummary> findTrainerSummaryByUsername(String username);
 }

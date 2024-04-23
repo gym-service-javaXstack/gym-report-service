@@ -15,7 +15,7 @@ import java.util.Optional;
 public class TrainerSummaryService {
     private final TrainerWorkLoadRepository trainerWorkLoadRepository;
 
-    public Optional<Long> findTrainerWorkLoad(String username, int year, int monthValue) {
+    public Optional<Integer> findTrainerWorkLoad(String username, int year, int monthValue) {
         Month month = Month.of(monthValue);
         return trainerWorkLoadRepository.findTrainerWorkLoadByMonth(username, year, month);
     }

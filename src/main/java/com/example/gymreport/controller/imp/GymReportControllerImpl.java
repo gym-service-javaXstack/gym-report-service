@@ -22,12 +22,13 @@ public class GymReportControllerImpl implements GymReportApi {
     }
 
     @Override
-    public ResponseEntity<Long> getTrainerSummaryByUsername(
+    public ResponseEntity<Integer> getTrainerSummaryByUsername(
             String username,
             int year,
             int monthValue,
             String authHeader) {
-        Long workloadByUsernameAndMonth = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue, authHeader);
+        log.info("Entry GymReportControllerImpl getTrainerSummaryByUsername method");
+        Integer workloadByUsernameAndMonth = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue, authHeader);
         return ResponseEntity.ok(workloadByUsernameAndMonth);
     }
 }

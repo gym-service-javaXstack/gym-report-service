@@ -17,7 +17,7 @@ public class TrainerSummary implements Serializable {
     private String firstName;
     private String lastName;
     private Boolean status;
-    private Map<Integer, Map<Month, Long>> yearlySummary;
+    private Map<Integer, Map<Month, Integer>> yearlySummary;
 
     public TrainerSummary() {
         this.yearlySummary = new HashMap<>();

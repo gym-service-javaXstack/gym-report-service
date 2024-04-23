@@ -11,7 +11,7 @@ public class TrainerWorkLoadRequest {
     private String lastName;
     private Boolean isActive;
     private LocalDate trainingDate;
-    private Long trainingDuration;
+    private Integer trainingDuration;
     private ActionType actionType;
 }
 

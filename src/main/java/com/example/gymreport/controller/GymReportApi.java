@@ -19,7 +19,7 @@ public interface GymReportApi {
     ResponseEntity<Void> processTrainerWorkload(@RequestBody TrainerWorkLoadRequest request);
 
     @GetMapping("/workload")
-    ResponseEntity<Long> getTrainerSummaryByUsername(
+    ResponseEntity<Integer> getTrainerSummaryByUsername(
             @RequestParam(name = "username") String username,
             @RequestParam(name = "year") int year,
             @RequestParam(name = "month") @Min(1) @Max(12) int monthValue,
