@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @RequestMapping("/api/v1")
 public interface GymReportApi {
 
     @PostMapping("/workload")
     ResponseEntity<Void> processTrainerWorkload(@RequestBody TrainerWorkLoadRequest request);
+
+    @PostMapping("/workload/list")
+    ResponseEntity<Void> processListTrainerWorkload(@RequestBody List<TrainerWorkLoadRequest> request);
 
     @GetMapping("/workload")
     ResponseEntity<Integer> getTrainerSummaryByUsername(

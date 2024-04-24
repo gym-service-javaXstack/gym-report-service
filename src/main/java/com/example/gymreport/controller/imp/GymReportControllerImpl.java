@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +20,13 @@ public class GymReportControllerImpl implements GymReportApi {
     public ResponseEntity<Void> processTrainerWorkload(TrainerWorkLoadRequest request) {
         log.info("Entry GymReportControllerImpl processTrainerWorkload method, request = {}", request);
         gymReportService.processTrainerWorkload(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> processListTrainerWorkload(List<TrainerWorkLoadRequest> request) {
+        log.info("Entry GymReportControllerImpl processListTrainerWorkload method");
+        gymReportService.processListTrainerWorkload(request);
         return ResponseEntity.ok().build();
     }
 

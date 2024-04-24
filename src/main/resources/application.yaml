@@ -60,9 +60,6 @@ eureka:
 
 #ACTUATOR CONFIGURATION
 management:
-  endpoint:
-    health:
-      show-details: always
   health:
     circuitbreakers:
       enabled: true
@@ -70,4 +67,3 @@ management:
     web:
       exposure:
         include: '*'
-
