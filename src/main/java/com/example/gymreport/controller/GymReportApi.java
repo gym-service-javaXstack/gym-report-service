@@ -1,6 +1,7 @@
 package com.example.gymreport.controller;
 
 import com.example.gymreport.dto.TrainerWorkLoadRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -18,10 +19,10 @@ import java.util.List;
 public interface GymReportApi {
 
     @PostMapping("/workload")
-    ResponseEntity<Void> processTrainerWorkload(@RequestBody TrainerWorkLoadRequest request);
+    ResponseEntity<Void> processTrainerWorkload(@Valid @RequestBody TrainerWorkLoadRequest request);
 
     @PostMapping("/workload/list")
-    ResponseEntity<Void> processListTrainerWorkload(@RequestBody List<TrainerWorkLoadRequest> request);
+    ResponseEntity<Void> processListTrainerWorkload(@Valid @RequestBody List<TrainerWorkLoadRequest> request);
 
     @GetMapping("/workload")
     ResponseEntity<Integer> getTrainerSummaryByUsername(
