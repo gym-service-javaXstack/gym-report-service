@@ -1,5 +1,13 @@
-#SELECT COMMUNICATION BETWEEN SERVICES
+#SELECT COMMUNICATION BETWEEN SERVICES (CAN BE CHANGED LIKE ENV IN DA DOCKER-COMPOSE)
 INTERACTION_BETWEEN_MICROSERVICES: feign
+application:
+  #MESSAGING QUEUE'S CONFIGURATION
+  messaging:
+    queue:
+      workload: trainerWorkloadQueue
+      trainer-summary:
+        response: trainerSummaryResponseQueue
+        request: trainerSummaryRequestQueue
 
 #SERVICE PORT 0=RANDOM PORT
 server:

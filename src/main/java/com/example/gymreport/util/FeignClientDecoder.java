@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class FeignClientDecoder implements ErrorDecoder {
-
     private final ErrorDecoder defaultErrorDecoder = new Default();
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -27,7 +26,7 @@ public class FeignClientDecoder implements ErrorDecoder {
         if (response.status() >= HttpStatus.BAD_REQUEST.value()
                 && response.status() < HttpStatus.INTERNAL_SERVER_ERROR.value()) {
 
-            String responseBody = "";
+            String responseBody;
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().asInputStream(), StandardCharsets.UTF_8))) {
                 responseBody = reader.lines().collect(Collectors.joining("\n"));
