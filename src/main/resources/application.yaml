@@ -1,3 +1,7 @@
+#SELECT COMMUNICATION BETWEEN SERVICES
+INTERACTION_BETWEEN_MICROSERVICES: feign
+
+#SERVICE PORT 0=RANDOM PORT
 server:
   port: 0
 
@@ -33,6 +37,13 @@ spring:
           gym-main:
             read-timeout: 2000
             connect-timeout: 1000
+  #ACTIVEMQ
+  artemis:
+    user: activemq
+    password: activemq
+  jms:
+    template:
+      receive-timeout: 10000
 
 #CIRCUIT BREAKER
 resilience4j:

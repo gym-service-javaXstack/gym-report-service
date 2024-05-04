@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Month;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -59,12 +58,6 @@ public class GymReportService {
         trainerSummaryService.saveTrainerSummary(request.getUsername(), trainerSummary);
 
         log.info("Exit GymReportService processTrainerWorkload method");
-    }
-
-    public void processListTrainerWorkload(List<TrainerWorkLoadRequest> requests) {
-        log.info("Entry GymReportService processListTrainerWorkload method");
-        requests.forEach(this::processTrainerWorkload);
-        log.info("Exit GymReportService processListTrainerWorkload method");
     }
 
     public Integer getWorkloadByUsernameAndMonth(String username, int year, int monthValue, String authHeader) {

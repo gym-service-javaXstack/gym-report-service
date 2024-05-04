@@ -1,4 +1,4 @@
-package com.example.gymreport.config;
+package com.example.gymreport.util;
 
 import com.example.gymreport.exceptions.Error;
 import com.example.gymreport.exceptions.UnauthorizedException;
