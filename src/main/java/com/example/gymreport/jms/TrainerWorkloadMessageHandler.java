@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(name = "INTERACTION_BETWEEN_MICROSERVICES", havingValue = "activemq")
 public class TrainerWorkloadMessageHandler {
     private static final String CORRELATION_ID_KEY = "correlationId";
+
     private final GymReportService gymReportService;
 
     @JmsListener(destination = "${application.messaging.queue.workload}", selector = "_type = 'TrainerWorkLoadRequest'")
