@@ -1,12 +1,90 @@
+#SELECT COMMUNICATION BETWEEN SERVICES (CAN BE CHANGED LIKE ENV IN DA DOCKER-COMPOSE)
+INTERACTION_BETWEEN_MICROSERVICES: feign
+application:
+  #MESSAGING QUEUE'S CONFIGURATION
+  messaging:
+    queue:
+      workload: trainerWorkloadQueue
+      trainer-summary:
+        response: trainerSummaryResponseQueue
+        request: trainerSummaryRequestQueue
+
+#SERVICE PORT 0=RANDOM PORT
 server:
-  port: 8081
+  port: 0
+
+#LOGGING PATTERN
+logging:
+  pattern:
+    console: "%clr(%d{${LOG_DATEFORMAT:yyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %X{correlationId:- } %msg%n"
+
+#APP ID
 spring:
   application:
     name: gym-report
+
+    #REDIS CONFIG
   data:
     redis:
-      url: redis://redis:6379
+      host: ${REDIS_HOST:localhost}
+      port: 6379
       username: default
       password: redis
       repositories:
         enabled: false
+
+    #CIRCUIT BREAKER
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: false
+        alphanumeric-ids:
+         enabled: true
+      client:
+        config:
+          gym-main:
+            read-timeout: 2000
+            connect-timeout: 1000
+  #ACTIVEMQ
+  artemis:
+    user: activemq
+    password: activemq
+    broker-url: tcp://${ACTIVEMQ_URI:localhost}:61616
+  jms:
+    template:
+      receive-timeout: 10000
+
+#CIRCUIT BREAKER
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      GymMainClientvalidateTokenStringString:
+        minimumNumberOfCalls: 6
+        failureRateThreshold: 50
+        ignoreExceptions:
+          - com.example.gymreport.exceptions.UnauthorizedException
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
+
+#EUREKA DISCOVERY CLIENT CONFIGURATION
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_URI:localhost}:8761/eureka
+  instance:
+    preferIpAddress: true
+
+#ACTUATOR CONFIGURATION
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
