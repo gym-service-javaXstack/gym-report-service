@@ -9,7 +9,11 @@ application:
       trainer-summary:
         response: trainerSummaryResponseQueue
         request: trainerSummaryRequestQueue
-
+  logging:
+    transaction-id:
+      key: "tx.id"
+      value: "DB Transaction Id: [%d]"
+      header: "Transaction-ID"
 #SERVICE PORT 0=RANDOM PORT
 server:
   port: 0
@@ -17,7 +21,7 @@ server:
 #LOGGING PATTERN
 logging:
   pattern:
-    console: "%clr(%d{${LOG_DATEFORMAT:yyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %X{correlationId:- } %msg%n"
+    console: "%clr(%d{${LOG_DATEFORMAT:yyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %X{correlationId:- } %X{tx.id:- } %msg%n"
 
 spring:
   #APP ID
@@ -35,7 +39,7 @@ spring:
         enabled: false
     #MONGODB CONFIGURATION
     mongodb:
-      uri: "mongodb://${MONGODB_USER:mongodb}:${MONGODB_PASSWORD:mongodb}@${MONGODB_HOSTS:localhost:27017}"
+      uri: "mongodb://${MONGODB_USER:mongodb}:${MONGODB_PASSWORD:mongodb}@${MONGODB_HOSTS:localhost:27018}"
       database: "${MONGODB_DATABASE:gym_db}"
       replica-set-name: "${MONGODB_RS:rs0}"
       auto-index-creation: true

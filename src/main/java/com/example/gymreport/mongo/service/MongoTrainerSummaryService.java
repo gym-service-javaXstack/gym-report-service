@@ -1,5 +1,6 @@
 package com.example.gymreport.mongo.service;
 
+import com.example.gymreport.dto.TrainerWorkLoadRequest;
 import com.example.gymreport.model.TrainerSummary;
 import com.example.gymreport.mongo.repository.MongoTrainerWorkLoadRepository;
 import com.example.gymreport.service.TrainerSummaryService;
@@ -21,6 +22,12 @@ public class MongoTrainerSummaryService implements TrainerSummaryService {
     private final MongoTrainerWorkLoadRepository mongoTrainerWorkLoadRepository;
 
     @Transactional(transactionManager = "mongoTransactionManager", readOnly = true)
+    public Optional<TrainerSummary> findTrainerSummaryByTrainerWorkLoadRequest(TrainerWorkLoadRequest request) {
+        log.info("Entry MongoTrainerSummaryService findTrainerSummaryByTrainerWorkLoadRequest method");
+        return mongoTrainerWorkLoadRepository.findByFirstNameAndLastNameAndUsername(request.getFirstName(), request.getLastName(), request.getUsername());
+    }
+
+    @Override
     public Optional<TrainerSummary> findTrainerSummaryByUsername(String username) {
         log.info("Entry MongoTrainerSummaryService findTrainerSummaryByUsername method");
         return mongoTrainerWorkLoadRepository.findById(username);

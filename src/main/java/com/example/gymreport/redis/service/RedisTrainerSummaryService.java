@@ -1,5 +1,6 @@
 package com.example.gymreport.redis.service;
 
+import com.example.gymreport.dto.TrainerWorkLoadRequest;
 import com.example.gymreport.model.TrainerSummary;
 import com.example.gymreport.redis.repository.RedisTrainerWorkLoadRepository;
 import com.example.gymreport.service.TrainerSummaryService;
@@ -16,6 +17,11 @@ import java.util.Optional;
 @ConditionalOnProperty(name = "NOSQL_TYPE", havingValue = "redis")
 public class RedisTrainerSummaryService implements TrainerSummaryService {
     private final RedisTrainerWorkLoadRepository redisTrainerWorkLoadRepository;
+
+    @Override
+    public Optional<TrainerSummary> findTrainerSummaryByTrainerWorkLoadRequest(TrainerWorkLoadRequest request) {
+        return redisTrainerWorkLoadRepository.findTrainerSummaryByUsername(request.getUsername());
+    }
 
     @Override
     public Optional<TrainerSummary> findTrainerSummaryByUsername(String username) {

@@ -25,7 +25,7 @@ public class GymReportService {
         Month trainingMonth = request.getTrainingDate().getMonth();
         int trainingYear = request.getTrainingDate().getYear();
 
-        TrainerSummary trainerSummary = trainerSummaryService.findTrainerSummaryByUsername(request.getUsername())
+        TrainerSummary trainerSummary = trainerSummaryService.findTrainerSummaryByTrainerWorkLoadRequest(request)
                 .orElse(new TrainerSummary());
 
         trainerSummary.setUsername(request.getUsername());
