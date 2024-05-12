@@ -1,5 +1,6 @@
 #SELECT COMMUNICATION BETWEEN SERVICES (CAN BE CHANGED LIKE ENV IN DA DOCKER-COMPOSE)
 INTERACTION_BETWEEN_MICROSERVICES: feign
+NOSQL_TYPE: mongo
 application:
   #MESSAGING QUEUE'S CONFIGURATION
   messaging:
@@ -18,13 +19,13 @@ logging:
   pattern:
     console: "%clr(%d{${LOG_DATEFORMAT:yyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %X{correlationId:- } %msg%n"
 
-#APP ID
 spring:
+  #APP ID
   application:
     name: gym-report
 
-    #REDIS CONFIG
   data:
+    #REDIS CONFIG
     redis:
       host: ${REDIS_HOST:localhost}
       port: 6379
@@ -32,14 +33,19 @@ spring:
       password: redis
       repositories:
         enabled: false
-
-    #CIRCUIT BREAKER
+    #MONGODB CONFIGURATION
+    mongodb:
+      uri: "mongodb://${MONGODB_USER:mongodb}:${MONGODB_PASSWORD:mongodb}@${MONGODB_HOSTS:localhost:27017}"
+      database: "${MONGODB_DATABASE:gym_db}"
+      replica-set-name: "${MONGODB_RS:rs0}"
+      auto-index-creation: true
+  #CIRCUIT BREAKER
   cloud:
     openfeign:
       circuitbreaker:
         enabled: false
         alphanumeric-ids:
-         enabled: true
+          enabled: true
       client:
         config:
           gym-main:
