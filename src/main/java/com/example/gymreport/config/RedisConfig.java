@@ -1,20 +1,37 @@
 package com.example.gymreport.config;
 
-import com.example.gymreport.redis.model.TrainerSummary;
+import com.example.gymreport.model.TrainerSummary;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@ConditionalOnProperty(name = "NOSQL_TYPE", havingValue = "redis")
 public class RedisConfig {
+    @Value("${spring.data.redis.host}")
+    private String REDIS_HOST;
+    @Value("${spring.data.redis.port}")
+    private Integer REDIS_PORT;
+    @Value("${spring.data.redis.username}")
+    private String REDIS_USERNAME;
+    @Value("${spring.data.redis.password}")
+    private String REDIS_PASSWORD;
+
 
     @Bean
     LettuceConnectionFactory lettuceConnectionFactory() {
-        return new LettuceConnectionFactory();
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(REDIS_HOST, REDIS_PORT);
+        config.setUsername(REDIS_USERNAME);
+        config.setPassword(REDIS_PASSWORD);
+        return new LettuceConnectionFactory(config);
     }
 
     @Bean
@@ -22,11 +39,8 @@ public class RedisConfig {
         RedisTemplate<String, TrainerSummary> template = new RedisTemplate<>();
         template.setConnectionFactory(lettuceConnectionFactory());
 
-
-        // Настраиваем ObjectMapper для работы с полиморфными подтипами и игнорированием проблем с отсутствующими свойствами
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // Указываем Jackson2JsonRedisSerializer для значений типа Object
         Jackson2JsonRedisSerializer<TrainerSummary> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(objectMapper, TrainerSummary.class);
 
         template.setKeySerializer(new StringRedisSerializer());
@@ -34,5 +48,10 @@ public class RedisConfig {
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
 
         return template;
+    }
+
+    @Bean
+    public HashOperations<String, String, TrainerSummary> hashOperations() {
+        return redisTemplate().opsForHash();
     }
 }

@@ -1,18 +1,15 @@
 package com.example.gymreport.service;
 
-import com.example.gymreport.dto.ActionType;
 import com.example.gymreport.dto.TrainerWorkLoadRequest;
-import com.example.gymreport.redis.model.TrainerSummary;
-import com.example.gymreport.redis.service.TrainerSummaryService;
+import com.example.gymreport.model.TrainerSummary;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Month;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -23,37 +20,51 @@ public class GymReportService {
     public void processTrainerWorkload(TrainerWorkLoadRequest request) {
         log.info("Entry GymReportService processTrainerWorkload method, request = {}", request);
 
-        Long duration = request.getTrainingDuration();
-        Month trainingMonth = Month.values()[request.getTrainingDate().getMonthValue()-1];
+        Integer duration = request.getTrainingDuration();
+        Month trainingMonth = request.getTrainingDate().getMonth();
+        int trainingYear = request.getTrainingDate().getYear();
 
-        // Получение текущей рабочей нагрузки тренера или создание новой, если она отсутствует
-        TrainerSummary trainerSummary = trainerSummaryService.findTrainerSummaryByUsername(request.getUsername())
+        TrainerSummary trainerSummary = trainerSummaryService.findTrainerSummaryByTrainerWorkLoadRequest(request)
                 .orElse(new TrainerSummary());
 
-        Map<Month, Long> monthlyWorkLoad = trainerSummary.getMonthlyWorkLoad();
-        Long currentWorkLoad = monthlyWorkLoad.getOrDefault(trainingMonth, 0L);
+        trainerSummary.setUsername(request.getUsername());
+        trainerSummary.setFirstName(request.getFirstName());
+        trainerSummary.setLastName(request.getLastName());
+        trainerSummary.setStatus(request.getIsActive());
 
-        if (request.getActionType() == ActionType.ADD) {
-            monthlyWorkLoad.put(trainingMonth, currentWorkLoad + duration);
-        } else if (request.getActionType() == ActionType.DELETE) {
-            long updatedWorkLoad = currentWorkLoad - duration;
 
-            if (updatedWorkLoad < 0) {
-                monthlyWorkLoad.put(trainingMonth, 0L);
-            } else {
-                monthlyWorkLoad.put(trainingMonth, updatedWorkLoad);
-            }
+        Map<Month, Integer> yearWorkLoad = trainerSummary.getYearlySummary().computeIfAbsent(trainingYear, k -> new EnumMap<>(Month.class));
+
+        Integer currentWorkLoad = yearWorkLoad.getOrDefault(trainingMonth, 0);
+
+        int updatedWorkLoad;
+        switch (request.getActionType()) {
+            case ADD:
+                updatedWorkLoad = currentWorkLoad + duration;
+                break;
+            case DELETE:
+                updatedWorkLoad = currentWorkLoad - duration;
+                if (updatedWorkLoad < 0) {
+                    updatedWorkLoad = 0;
+                }
+                break;
+            default:
+                updatedWorkLoad = currentWorkLoad;
+                break;
         }
 
-        // Сохранение обновленной рабочей нагрузки в Redis
-        trainerSummary.setMonthlyWorkLoad(monthlyWorkLoad);
-        trainerSummaryService.saveTrainerWorkLoad(request.getUsername(), trainingMonth, monthlyWorkLoad.get(trainingMonth));
+        yearWorkLoad.put(trainingMonth, updatedWorkLoad);
+        trainerSummaryService.saveTrainerSummary(trainerSummary);
 
         log.info("Exit GymReportService processTrainerWorkload method");
     }
 
-    public TrainerSummary getTrainerSummaryByUsername(String username) {
+    public Integer getWorkloadByUsernameAndMonth(String username, int year, int monthValue) {
+        log.info("Entry GymReportService getWorkloadByUsernameAndMonth method");
+
         return trainerSummaryService.findTrainerSummaryByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("No such user at DB"));
+                .map(trainerSummary -> trainerSummary.getYearlySummary().getOrDefault(year, Collections.emptyMap()))
+                .map(yearlySummary -> yearlySummary.getOrDefault(Month.of(monthValue), 0))
+                .orElse(0);
     }
 }
