@@ -1,9 +1,9 @@
 package com.example.gymreport.config;
 
-import com.example.gymreport.redis.model.TrainerSummary;
+import com.example.gymreport.model.TrainerSummary;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -14,7 +14,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@Slf4j
+@ConditionalOnProperty(name = "NOSQL_TYPE", havingValue = "redis")
 public class RedisConfig {
     @Value("${spring.data.redis.host}")
     private String REDIS_HOST;

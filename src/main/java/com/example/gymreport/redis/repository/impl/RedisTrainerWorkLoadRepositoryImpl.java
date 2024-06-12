@@ -1,19 +1,20 @@
 package com.example.gymreport.redis.repository.impl;
 
-import com.example.gymreport.redis.model.TrainerSummary;
-import com.example.gymreport.redis.repository.TrainerWorkLoadRepository;
+import com.example.gymreport.model.TrainerSummary;
+import com.example.gymreport.redis.repository.RedisTrainerWorkLoadRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Repository;
 
-import java.time.Month;
 import java.util.Optional;
 
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class TrainerWorkLoadRepositoryImpl implements TrainerWorkLoadRepository {
+@ConditionalOnProperty(name = "NOSQL_TYPE", havingValue = "redis")
+public class RedisTrainerWorkLoadRepositoryImpl implements RedisTrainerWorkLoadRepository {
     private static final String TRAINER_SUMMARY_KEY = "TrainerSummary";
 
     private final HashOperations<String, String, TrainerSummary> hashOperations;
@@ -21,16 +22,6 @@ public class TrainerWorkLoadRepositoryImpl implements TrainerWorkLoadRepository 
     @Override
     public void saveTrainerSummary(String username, TrainerSummary trainerSummary) {
         hashOperations.put(TRAINER_SUMMARY_KEY, username, trainerSummary);
-    }
-
-    @Override
-    public Optional<Integer> findTrainerWorkLoadByMonth(String username, int year, Month month) {
-        TrainerSummary trainerSummary = hashOperations.get(TRAINER_SUMMARY_KEY, username);
-        if (trainerSummary != null && trainerSummary.getYearlySummary().containsKey(year)) {
-            Integer workLoad = trainerSummary.getYearlySummary().get(year).get(month);
-            return Optional.ofNullable(workLoad);
-        }
-        return Optional.empty();
     }
 
     @Override
