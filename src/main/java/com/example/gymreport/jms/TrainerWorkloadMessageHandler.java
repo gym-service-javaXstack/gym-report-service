@@ -42,12 +42,11 @@ public class TrainerWorkloadMessageHandler {
             @Header(value = "username") String username,
             @Header(value = "year") int year,
             @Header(value = "monthValue") int monthValue,
-            @Header(value = "authHeader") String authHeader,
             @Header(value = "X_Trace_Id") String traceId
     ) {
         try {
             MDC.put(CORRELATION_ID_KEY, traceId);
-            return gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue, authHeader);
+            return gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue);
         } finally {
             MDC.remove(CORRELATION_ID_KEY);
         }

@@ -18,7 +18,6 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,9 +29,6 @@ class GymReportServiceTest {
 
     @Mock
     private TrainerSummaryService trainerSummaryService;
-
-    @Mock
-    private AuthenticationService authenticationService;
 
     @Test
     void processTrainerWorkload() {
@@ -58,7 +54,6 @@ class GymReportServiceTest {
         String username = "username";
         int year = 2022;
         int monthValue = 1;
-        String authHeader = "authHeader";
         TrainerSummary trainerSummary = new TrainerSummary();
         Map<Integer, Map<Month, Integer>> yearlySummary = new HashMap<>();
         Map<Month, Integer> monthWorkload = new EnumMap<>(Month.class);
@@ -66,15 +61,58 @@ class GymReportServiceTest {
         yearlySummary.put(year, monthWorkload);
         trainerSummary.setYearlySummary(yearlySummary);
 
-        doNothing().when(authenticationService).validateToken(authHeader);
         when(trainerSummaryService.findTrainerSummaryByUsername(username)).thenReturn(java.util.Optional.of(trainerSummary));
 
         // Act
-        Integer workload = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue, authHeader);
+        Integer workload = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue);
 
-        // Assert
-        verify(authenticationService).validateToken(authHeader);
         verify(trainerSummaryService).findTrainerSummaryByUsername(username);
         assertThat(workload, is(100));
+    }
+
+    @Test
+    void processTrainerWorkload_deleteAction() {
+        // Arrange
+        TrainerWorkLoadRequest request = new TrainerWorkLoadRequest("username", "firstName", "lastName", true,
+                LocalDate.of(2022, Month.JANUARY, 1), 60, ActionType.DELETE);
+        TrainerSummary trainerSummary = new TrainerSummary();
+        Map<Integer, Map<Month, Integer>> yearlySummary = new HashMap<>();
+        Map<Month, Integer> monthWorkload = new EnumMap<>(Month.class);
+        monthWorkload.put(Month.JANUARY, 100);
+        yearlySummary.put(2022, monthWorkload);
+        trainerSummary.setYearlySummary(yearlySummary);
+
+        when(trainerSummaryService.findTrainerSummaryByTrainerWorkLoadRequest(request)).thenReturn(java.util.Optional.of(trainerSummary));
+
+        // Act
+        gymReportService.processTrainerWorkload(request);
+
+        // Assert
+        verify(trainerSummaryService).findTrainerSummaryByTrainerWorkLoadRequest(request);
+        verify(trainerSummaryService).saveTrainerSummary(trainerSummary);
+        assertThat(trainerSummary.getYearlySummary().get(2022).get(Month.JANUARY), is(40));
+    }
+
+    @Test
+    void processTrainerWorkload_deleteActionNegativeResult() {
+        // Arrange
+        TrainerWorkLoadRequest request = new TrainerWorkLoadRequest("username", "firstName", "lastName", true,
+                LocalDate.of(2022, Month.JANUARY, 1), 60, ActionType.DELETE);
+        TrainerSummary trainerSummary = new TrainerSummary();
+        Map<Integer, Map<Month, Integer>> yearlySummary = new HashMap<>();
+        Map<Month, Integer> monthWorkload = new EnumMap<>(Month.class);
+        monthWorkload.put(Month.JANUARY, 50);
+        yearlySummary.put(2022, monthWorkload);
+        trainerSummary.setYearlySummary(yearlySummary);
+
+        when(trainerSummaryService.findTrainerSummaryByTrainerWorkLoadRequest(request)).thenReturn(java.util.Optional.of(trainerSummary));
+
+        // Act
+        gymReportService.processTrainerWorkload(request);
+
+        // Assert
+        verify(trainerSummaryService).findTrainerSummaryByTrainerWorkLoadRequest(request);
+        verify(trainerSummaryService).saveTrainerSummary(trainerSummary);
+        assertThat(trainerSummary.getYearlySummary().get(2022).get(Month.JANUARY), is(0));
     }
 }

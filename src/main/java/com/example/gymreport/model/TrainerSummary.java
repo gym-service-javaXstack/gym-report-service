@@ -1,6 +1,7 @@
 package com.example.gymreport.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
+@Builder
 @Document
 @AllArgsConstructor
 @RedisHash("TrainerSummary")

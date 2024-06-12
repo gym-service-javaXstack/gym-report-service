@@ -28,10 +28,9 @@ public class GymReportControllerImpl implements GymReportApi {
     public ResponseEntity<Integer> getTrainerSummaryByUsername(
             String username,
             int year,
-            int monthValue,
-            String authHeader) {
+            int monthValue) {
         log.info("Entry GymReportControllerImpl getTrainerSummaryByUsername method");
-        Integer workloadByUsernameAndMonth = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue, authHeader);
+        Integer workloadByUsernameAndMonth = gymReportService.getWorkloadByUsernameAndMonth(username, year, monthValue);
         log.info("Exit GymReportControllerImpl getTrainerSummaryByUsername method");
         return ResponseEntity.ok(workloadByUsernameAndMonth);
     }
